@@ -1,3 +1,8 @@
+<div>
+  <label>View http://localhost/car-advance/web/car-advance</label>
+  <img src ="car-advance.png" alt="car-advance" />
+<div>
+
 <p align="center">
     <a href="https://github.com/yiisoft" target="_blank">
         <img src="https://avatars0.githubusercontent.com/u/993323" height="100px">
