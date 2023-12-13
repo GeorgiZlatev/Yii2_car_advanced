@@ -1,6 +1,6 @@
 <div>
-  <label>View http://localhost/car-advance/web/car-advance</label>
-  <img src ="car-advance.png" alt="car-advance" />
+  <label>View http://localhost/car-car-advanced.png/web/car-car-advanced.png</label>
+  <img src ="car-car-advanced.png.png" alt="car-car-advanced.png" />
 <div>
 
 <p align="center">
