@@ -7,6 +7,7 @@ use backend\models\CarAdvancedSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
 
 /**
  * CarAdvancedController implements the CRUD actions for CarAdvanced model.
@@ -25,6 +26,7 @@ class CarAdvancedController extends Controller
                     'class' => VerbFilter::className(),
                     'actions' => [
                         'delete' => ['POST'],
+                        'delete-project-image' => ['POST'],
                     ],
                 ],
             ]
@@ -70,8 +72,14 @@ class CarAdvancedController extends Controller
         $model = new CarAdvanced();
 
         if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
+            if ($model->load($this->request->post())) {
+                $model->imageFile = UploadedFile::getInstance($model, 'imageFile');
+                if($model->save()){
+                    $model->saveImage();
+                    Yii::$app->session->setFlash('success', 'Successfully saved');
+                    return $this->redirect(['view', 'id' => $model->id]);
+                }
+
             }
         } else {
             $model->loadDefaultValues();
@@ -93,8 +101,14 @@ class CarAdvancedController extends Controller
     {
         $model = $this->findModel($id);
 
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $model->imageFile = UploadedFile::getInstance($model, 'imageFile');
+            if($model->save()){
+                $model->saveImage();
+                Yii::$app->session->setFlash('success', 'Successfully saved');
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
+
         }
 
         return $this->render('update', [

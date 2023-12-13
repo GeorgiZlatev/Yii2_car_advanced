@@ -31,6 +31,28 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
             'id',
             'type_auto',
+            [
+                'label' => Yii::t('app', 'Images'),
+                'format' => 'raw',
+                'value'=> function($model){
+                    /**
+                     * @var $model \common\models\CarAdvanced
+                     */
+                    if(!$model->hasImages()){
+                        return null;
+                    }
+                    $imagesHtml = "";
+                    foreach ($model->images as $image){
+                        $imagesHtml .= Html::img($image->file->absoluteUrl(), [
+                            'alt' => 'Demonstration of the user interface',
+                            'height' => 200,
+                            'class' => 'project-view__image'
+                        ]);
+                    }
+                    return $imagesHtml;
+                }
+
+            ],
             'brand:ntext',
             'model:ntext',
             'year_car:ntext',

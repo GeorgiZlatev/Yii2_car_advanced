@@ -3,6 +3,7 @@
 namespace common\models;
 
 use Yii;
+use yii\web\UploadedFile;
 
 /**
  * This is the model class for table "car_advanced".
@@ -16,10 +17,20 @@ use Yii;
  * @property string|null $start_date
  * @property string|null $end_date
  *
- * @property CarAdvancedImage[] $carAdvancedImages
+ * @property CarAdvancedImage[] $Images
  */
+function mine_content_type($filename) {
+    $mime_type = mime_content_type($filename);
+    return $mime_type;
+}
+
 class CarAdvanced extends \yii\db\ActiveRecord
 {
+
+    /**
+     * @var UploadedFile
+     */
+    public $imageFile;
     /**
      * {@inheritdoc}
      */
@@ -63,7 +74,7 @@ class CarAdvanced extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery|CarAdvancedImageQuery
      */
-    public function getCarAdvancedImages()
+    public function getImages()
     {
         return $this->hasMany(CarAdvancedImage::class, ['car_advanced_id' => 'id']);
     }
@@ -75,5 +86,31 @@ class CarAdvanced extends \yii\db\ActiveRecord
     public static function find()
     {
         return new CarAdvancedQuery(get_called_class());
+    }
+
+    public function saveImage(){
+        Yii::$app->db->transaction(function ($db){
+            /**
+             * @var $db yii\db\Connection
+             */
+            $file = new File();
+            $file->name = uniqid(true) . '.' . $this->imageFile->extension;
+            $file->base_url = Yii::$app->urlManager->createAbsoluteUrl('uploads/projects');
+            $file->mime_type = mine_content_type($this->imageFile->tempName);
+            $file->save();
+
+            $projectImage = new CarAdvancedImage();
+            $projectImage->car_advanced_id = $this->id;
+            $projectImage->file_id = $file->id;
+            $projectImage->save();
+
+            if(!$this->imageFile->saveAs('uploads/projects' . '/' .$file->name)){
+                $db->transaction->rollBack();
+            }
+
+        });
+    }
+    public function hasImages(){
+        return count($this->images) > 0;
     }
 }
